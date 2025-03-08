@@ -1,4 +1,8 @@
-const gridSize = 4;
+let gridSize = 4;
+let score = 0;
+let timer = 15;
+let timerInterval;
+let gameActive = false;
 
 function createBaseSquare() {
     const div = document.createElement("div");
@@ -12,19 +16,31 @@ function createBaseSquare() {
         backgroundColor: "white"
     });
 
-    div.addEventListener("mouseover", () => div.style.backgroundColor = "whitesmoke");
-    div.addEventListener("mouseout", () => div.style.backgroundColor = "white");
-    div.addEventListener("mousedown", () => div.style.backgroundColor = "black");
+    div.addEventListener("mouseover", () => {
+        if (gameActive) div.style.backgroundColor = "whitesmoke";
+    });
+    div.addEventListener("mouseout", () => {
+        if (gameActive && !div.classList.contains("target")) div.style.backgroundColor = "white";
+    });
+    div.addEventListener("mousedown", () => {
+        if (gameActive && !div.classList.contains("target")) {
+            div.style.backgroundColor = "red";
+            setTimeout(() => {
+                if (!div.classList.contains("target")) div.style.backgroundColor = "white";
+            }, 200);
+            updateScore(-1);
+        }
+    });
 
     return div;
 }
 
 function targetMouseOver() {
-    this.style.backgroundColor = "#FFD580";
+    if (gameActive) this.style.backgroundColor = "#FFD580";
 }
 
 function targetMouseOut() {
-    this.style.backgroundColor = "orange";
+    if (gameActive) this.style.backgroundColor = "orange";
 }
 
 function makeTargetSquare(square) {
@@ -35,15 +51,26 @@ function makeTargetSquare(square) {
     square.addEventListener("mouseout", targetMouseOut);
 
     const mouseDownHandler = function() {
-        this.style.backgroundColor = "white";
-        this.classList.remove("target");
-        this.removeEventListener("mouseover", targetMouseOver);
-        this.removeEventListener("mouseout", targetMouseOut);
-        this.removeEventListener("mousedown", mouseDownHandler);
-        targetSquare();
+        if (gameActive) {
+            this.style.backgroundColor = "green";
+            setTimeout(() => {
+                this.style.backgroundColor = "white";
+                this.classList.remove("target");
+            }, 200);
+            this.removeEventListener("mouseover", targetMouseOver);
+            this.removeEventListener("mouseout", targetMouseOut);
+            this.removeEventListener("mousedown", mouseDownHandler);
+            updateScore(1);
+            targetSquare();
+        }
     };
 
     square.addEventListener("mousedown", mouseDownHandler);
+}
+
+function updateScore(points) {
+    score += points;
+    document.getElementById("score").textContent = score;
 }
 
 function getRandomSquare() {
@@ -63,6 +90,7 @@ function targetSquare() {
 
 function createGrid() {
     const container = document.getElementById("container");
+    container.innerHTML = '';
     
     for (let i = 0; i < gridSize; i++) {
         const section = document.createElement("section");
@@ -82,18 +110,69 @@ function createGrid() {
     }
 }
 
-function clearGrid() {
-    document.getElementById("container").innerHTML = '';
+function startTimer() {
+    gameActive = true;
+    timer = 15;
+    document.getElementById("timer").textContent = timer;
+    
+    timerInterval = setInterval(() => {
+        timer--;
+        document.getElementById("timer").textContent = timer;
+        
+        if (timer <= 0) {
+            endGame();
+        }
+    }, 1000);
+}
+
+function showGameOverPopup() {
+    document.getElementById("final-score").textContent = score;
+    document.getElementById("game-over").classList.remove("hidden");
+}
+
+function hideGameOverPopup() {
+    document.getElementById("game-over").classList.add("hidden");
+}
+
+function endGame() {
+    clearInterval(timerInterval);
+    gameActive = false;
+    showGameOverPopup();
+}
+
+function resetGame() {
+    clearInterval(timerInterval);
+    
+    score = 0;
+    document.getElementById("score").textContent = score;
+    
+    hideGameOverPopup();
     createGrid();
+    startTimer();
+}
+
+function updateGridSize(size) {
+    gridSize = size;
+    document.getElementById("size-value").textContent = size;
+    resetGame();
 }
 
 function initGame() {
     createGrid();
     
-    document.querySelector("#clear-button").addEventListener('click', clearGrid);
-    document.addEventListener("keydown", (event) => {
-        if (event.key.toLowerCase() === "r") clearGrid();
+    document.querySelector("#reset-button").addEventListener('click', resetGame);
+    document.querySelector("#close-popup").addEventListener('click', resetGame);
+    
+    const sizeSlider = document.querySelector("#size-slider");
+    sizeSlider.addEventListener('input', () => {
+        updateGridSize(parseInt(sizeSlider.value));
     });
+    
+    document.addEventListener("keydown", (event) => {
+        if (event.key.toLowerCase() === "r") resetGame();
+    });
+    
+    startTimer();
 }
 
 document.addEventListener('DOMContentLoaded', initGame);

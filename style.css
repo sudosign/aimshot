@@ -10,6 +10,15 @@ body {
     background-color: #363636;
 }
 
+#game-area {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
 #container {
     display: flex;
     flex-direction: column;
@@ -17,7 +26,6 @@ body {
     height: 600px;
     border: 2px solid #333;
     box-shadow: 0 0 10px orange;
-    margin-bottom: 20px;
 }
 
 .section {
@@ -29,10 +37,21 @@ body {
     flex-grow: 10;
 }
 
-#clear-button {
+#game-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 600px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#reset-button, #close-popup {
     width: 150px;
     height: 50px;
-    margin: 10px;
+    margin: 0 20px;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -40,8 +59,72 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
+    text-transform: lowercase;
 }
 
-#clear-button:hover {
+#reset-button:hover, #close-popup:hover {
     background-color: #45a049;
+}
+
+#size-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 600px;
+    margin-left: 20px;
+}
+
+#size-slider {
+    height: 400px;
+    width: 20px;
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+}
+
+#size-value {
+    color: white;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+#game-over {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+#popup-content {
+    background-color: #363636;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    border: 2px solid orange;
+    box-shadow: 0 0 20px orange;
+}
+
+#popup-content h2, #popup-content p {
+    color: white;
+    margin: 10px 0;
+    text-transform: lowercase;
+}
+
+#final-score {
+    font-size: 24px;
+    font-weight: bold;
+    color: orange;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#score-display, #timer-display {
+    min-width: 120px;
 }

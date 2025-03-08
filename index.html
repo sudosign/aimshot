@@ -3,13 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>aimshot</title>
 </head>
 <body>
-    <div id="container"></div>
-    <button id = "clear-button">Clear</button>
+    <div id="game-area">
+        <div id="container"></div>
+        <div id="size-control">
+            <input type="range" id="size-slider" min="3" max="8" value="4" orient="vertical">
+            <div id="size-value">4</div>
+        </div>
+    </div>
+    <div id="game-controls">
+        <div id="score-display">score: <span id="score">0</span></div>
+        <button id="reset-button">reset</button>
+        <div id="timer-display">time: <span id="timer">15</span>s</div>
+    </div>
+    
+    <div id="game-over" class="hidden">
+        <div id="popup-content">
+            <h2>game over</h2>
+            <p>your score: <span id="final-score">0</span></p>
+            <button id="close-popup">play again</button>
+        </div>
+    </div>
 
-    <script src ="main.js"></script>
-    <link rel = "stylesheet" href = "style.css">
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="style.css">
 </body>
 </html>
