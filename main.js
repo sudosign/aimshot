@@ -3,6 +3,7 @@ let score = 0;
 let timer = 15;
 let timerInterval;
 let gameActive = false;
+let gameInitialized = false;
 
 function createBaseSquare() {
     const div = document.createElement("div");
@@ -23,6 +24,11 @@ function createBaseSquare() {
         if (gameActive && !div.classList.contains("target")) div.style.backgroundColor = "white";
     });
     div.addEventListener("mousedown", () => {
+        if (!gameInitialized) {
+            startTimer();
+            gameInitialized = true;
+        }
+        
         if (gameActive && !div.classList.contains("target")) {
             div.style.backgroundColor = "red";
             setTimeout(() => {
@@ -51,6 +57,11 @@ function makeTargetSquare(square) {
     square.addEventListener("mouseout", targetMouseOut);
 
     const mouseDownHandler = function() {
+        if (!gameInitialized) {
+            startTimer();
+            gameInitialized = true;
+        }
+        
         if (gameActive) {
             this.style.backgroundColor = "green";
             setTimeout(() => {
@@ -134,6 +145,14 @@ function hideGameOverPopup() {
     document.getElementById("game-over").classList.add("hidden");
 }
 
+function showHowToPlayPopup() {
+    document.getElementById("how-to-play").classList.remove("hidden");
+}
+
+function hideHowToPlayPopup() {
+    document.getElementById("how-to-play").classList.add("hidden");
+}
+
 function endGame() {
     clearInterval(timerInterval);
     gameActive = false;
@@ -145,10 +164,13 @@ function resetGame() {
     
     score = 0;
     document.getElementById("score").textContent = score;
+    timer = 15;
+    document.getElementById("timer").textContent = timer;
     
     hideGameOverPopup();
     createGrid();
-    startTimer();
+    gameActive = false;
+    gameInitialized = false;
 }
 
 function updateGridSize(size) {
@@ -162,6 +184,7 @@ function initGame() {
     
     document.querySelector("#reset-button").addEventListener('click', resetGame);
     document.querySelector("#close-popup").addEventListener('click', resetGame);
+    document.querySelector("#close-instructions").addEventListener('click', hideHowToPlayPopup);
     
     const sizeSlider = document.querySelector("#size-slider");
     sizeSlider.addEventListener('input', () => {
@@ -172,7 +195,10 @@ function initGame() {
         if (event.key.toLowerCase() === "r") resetGame();
     });
     
-    startTimer();
+    document.getElementById("timer").textContent = timer;
+    gameInitialized = false;
+    
+    showHowToPlayPopup();
 }
 
 document.addEventListener('DOMContentLoaded', initGame);
