@@ -1,0 +1,26 @@
+
+
+#container{
+    display:flex;
+    flex: 1;
+    flex-direction: column;
+
+    width: 900px;
+    height: 900px;
+}
+
+.section{
+    display:flex;
+    flex-direction: row;
+}
+
+#container .section, .section .square{
+    flex-grow: 10;
+}
+
+#clear-button{
+    width: 100px;
+    height: 50px;
+    margin: 10px;
+    align-self: center;
+}
