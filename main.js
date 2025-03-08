@@ -1,3 +1,5 @@
+const gridSize = 4;
+
 function createGrid(gridSize) {
     for (let i = 0; i < gridSize; i++) {
         var sect = document.createElement("section");
@@ -30,6 +32,36 @@ function createGrid(gridSize) {
             sect.appendChild(div);
         }
     }
+    const numOfTargets = Math.floor((gridSize * gridSize) / 4 - 0.01);
+    for (let i = 0; i < numOfTargets; i++) {
+        targetSquare(gridSize);
+    }
+}
+
+function targetSquare(gridSize) {
+    let square;
+    do {
+        let randomRow = Math.floor(Math.random() * gridSize);
+        let randomSquare = Math.floor(Math.random() * gridSize);
+        square = document.querySelector(`.section-${randomRow} .square-${randomSquare}`);
+    } while (square && square.classList.contains("target"));
+
+
+    square.style.backgroundColor = "orange";
+    square.classList.add("target");
+
+    square.addEventListener("mouseover", function() {
+        this.style.backgroundColor = "#FFD580";
+    });
+    square.addEventListener("mouseout", function() {
+        this.style.backgroundColor = "orange";
+    });
+
+    square.addEventListener("mousedown", function() {
+        this.style.backgroundColor = "white"; 
+        this.replaceWith(this.cloneNode(true)); //godsend
+        targetSquare(gridSize);
+    });
 }
 
 function clearGrid() {
@@ -43,10 +75,10 @@ function clearGrid() {
     }
 
     // createGrid(gridSize);
-    createGrid(4)
+    createGrid(gridSize)
 }
 
-createGrid(4)
+createGrid(gridSize)
 
 const resetButton = document.querySelector("#clear-button");
 resetButton.onmousedown = clearGrid;
