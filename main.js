@@ -2,43 +2,21 @@ const gridSize = 4;
 
 function createBaseSquare() {
     const div = document.createElement("div");
-
-    div.className = `square`; 
-
-    div.style.margin = "0";
-    div.style.padding = "0";
-    div.style.border = "1px solid black";
-    div.style.flex = "1";
-    div.style.backgroundColor = "white";
-
-    div.addEventListener("mouseover", function() {
-        this.style.backgroundColor = "whitesmoke";
+    div.className = "square";
+    
+    Object.assign(div.style, {
+        margin: "0",
+        padding: "0",
+        border: "1px solid black",
+        flex: "1",
+        backgroundColor: "white"
     });
-    div.addEventListener("mouseout", function() {
-        this.style.backgroundColor = "white";
-    });
-    div.addEventListener("mousedown", function() {
-        this.style.backgroundColor = "black";
-    });
+
+    div.addEventListener("mouseover", () => div.style.backgroundColor = "whitesmoke");
+    div.addEventListener("mouseout", () => div.style.backgroundColor = "white");
+    div.addEventListener("mousedown", () => div.style.backgroundColor = "black");
 
     return div;
-}
-
-function makeTargetSquare(square, gridSize) {
-    square.classList.add("target");
-    square.style.backgroundColor = "orange";
-
-    square.addEventListener("mouseover", targetMouseOver);
-    square.addEventListener("mouseout", targetMouseOut);
-
-    square.addEventListener("mousedown", function() {
-        this.style.backgroundColor = "white";
-        this.classList.remove("target");
-        this.removeEventListener("mouseover", targetMouseOver);
-        this.removeEventListener("mouseout", targetMouseOut);
-        this.removeEventListener("mousedown", arguments.callee); //change
-        targetSquare(gridSize);
-    });
 }
 
 function targetMouseOver() {
@@ -49,49 +27,73 @@ function targetMouseOut() {
     this.style.backgroundColor = "orange";
 }
 
-function targetSquare(gridSize) {
-    let square;
-    do {
-        let randomRow = Math.floor(Math.random() * gridSize);
-        let randomSquare = Math.floor(Math.random() * gridSize);
-        square = document.querySelector(`.section-${randomRow} .square-${randomSquare}`);
-    } while (square && square.classList.contains("target"));
+function makeTargetSquare(square) {
+    square.classList.add("target");
+    square.style.backgroundColor = "orange";
 
-    makeTargetSquare(square, gridSize);
+    square.addEventListener("mouseover", targetMouseOver);
+    square.addEventListener("mouseout", targetMouseOut);
+
+    const mouseDownHandler = function() {
+        this.style.backgroundColor = "white";
+        this.classList.remove("target");
+        this.removeEventListener("mouseover", targetMouseOver);
+        this.removeEventListener("mouseout", targetMouseOut);
+        this.removeEventListener("mousedown", mouseDownHandler);
+        targetSquare();
+    };
+
+    square.addEventListener("mousedown", mouseDownHandler);
 }
 
-function createGrid(gridSize) {
+function getRandomSquare() {
+    const randomRow = Math.floor(Math.random() * gridSize);
+    const randomSquare = Math.floor(Math.random() * gridSize);
+    return document.querySelector(`.section-${randomRow} .square-${randomSquare}`);
+}
+
+function targetSquare() {
+    let square;
+    do {
+        square = getRandomSquare();
+    } while (square && square.classList.contains("target"));
+
+    makeTargetSquare(square);
+}
+
+function createGrid() {
+    const container = document.getElementById("container");
+    
     for (let i = 0; i < gridSize; i++) {
-        var sect = document.createElement("section");
-        sect.className = `section section-${i}`;
-        document.getElementById("container").appendChild(sect);
+        const section = document.createElement("section");
+        section.className = `section section-${i}`;
+        container.appendChild(section);
 
         for (let j = 0; j < gridSize; j++) {
             const div = createBaseSquare();
             div.classList.add(`square-${j}`);
-            sect.appendChild(div);
+            section.appendChild(div);
         }
     }
+    
     const numOfTargets = Math.floor((gridSize * gridSize) / 4 - 0.01);
     for (let i = 0; i < numOfTargets; i++) {
-        targetSquare(gridSize);
+        targetSquare();
     }
 }
 
 function clearGrid() {
-    while (document.getElementById("container").firstChild) {
-        document.getElementById("container").removeChild(document.getElementById("container").lastChild);
-    }
-    createGrid(gridSize);
+    document.getElementById("container").innerHTML = '';
+    createGrid();
 }
 
-createGrid(gridSize);
+function initGame() {
+    createGrid();
+    
+    document.querySelector("#clear-button").addEventListener('click', clearGrid);
+    document.addEventListener("keydown", (event) => {
+        if (event.key.toLowerCase() === "r") clearGrid();
+    });
+}
 
-const resetButton = document.querySelector("#clear-button");
-resetButton.onmousedown = clearGrid;
-
-document.addEventListener("keydown", function(event) {
-    if (event.key.toLowerCase() === "r") { 
-        clearGrid();
-    }
-});
+document.addEventListener('DOMContentLoaded', initGame);
