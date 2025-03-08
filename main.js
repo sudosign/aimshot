@@ -5,45 +5,46 @@ function createGrid(gridSize) {
         document.getElementById("container").appendChild(sect);
 
         for (let j = 0; j < gridSize; j++) {
-            var div = document.createElement("div");
+            var button = document.createElement("button");
 
-            div.className = `square square-${j}`; 
+            button.className = `square square-${j}`; 
 
-            div.style.margin = "0";
-            div.style.padding = "0";
-            div.style.border = "1px solid black"; 
+            button.style.margin = "0";
+            button.style.padding = "0";
+            button.style.border = "1px solid black"; 
 
-            // div.style.width = "100px";
-            // div.style.height = "100px";
-            div.style.flex = "1";
+            button.style.flex = "1";
 
-            div.addEventListener("mouseover", function() {
-                this.style.backgroundColor = "black"; 
-            });
+            button.onclick = function () {
+                this.style.backgroundColor = "black";
+            };
 
-            // div.onmouseout = function(){
-            //     this.style.backgroundColor = "lightgrey";
-            // }
-
-            sect.appendChild(div);
+            sect.appendChild(button);
         }
     }
 }
 
-createGrid(prompt("How many squares per side: "));
+function clearGrid() {
+    // let gridSize;
+    // do {
+    //     gridSize = prompt("Please enter the new size of the grid:");
+    // } while (gridSize > 100);
 
-const resetButton = document.querySelector("#clear-button")
-resetButton.onmousedown = function(){
-//https://github.com/Danjor225/odin-etchsketch/blob/main/java-script.js
-
-    let gridSize;
-    do{
-        gridSize = prompt("Please enter the new size of the grid:");
-    }while(gridSize > 100);
-    
-    while(document.getElementById("container").firstChild){
-        document.getElementById("container").removeChild(document.getElementById("container").lastChild)
+    while (document.getElementById("container").firstChild) {
+        document.getElementById("container").removeChild(document.getElementById("container").lastChild);
     }
 
-    createGrid(gridSize);
+    // createGrid(gridSize);
+    createGrid(4)
 }
+
+createGrid(4)
+
+const resetButton = document.querySelector("#clear-button");
+resetButton.onmousedown = clearGrid;
+
+document.addEventListener("keydown", function (event) {
+    if (event.key.toLowerCase() === "r") { // Checks if the 'R' key is pressed
+        clearGrid();
+    }
+});
