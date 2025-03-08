@@ -5,21 +5,29 @@ function createGrid(gridSize) {
         document.getElementById("container").appendChild(sect);
 
         for (let j = 0; j < gridSize; j++) {
-            var button = document.createElement("button");
+            var div = document.createElement("div");
 
-            button.className = `square square-${j}`; 
+            div.className = `square square-${j}`; 
 
-            button.style.margin = "0";
-            button.style.padding = "0";
-            button.style.border = "1px solid black"; 
+            div.style.margin = "0";
+            div.style.padding = "0";
+            div.style.border = "1px solid black"; 
+            div.style.flex = "1";
 
-            button.style.flex = "1";
+            div.style.backgroundColor = "white";
 
-            button.onclick = function () {
-                this.style.backgroundColor = "black";
-            };
+            div.addEventListener("mouseover", function() {
+                this.style.backgroundColor = "whitesmoke";
+            });
+            div.addEventListener("mouseout", function() {
+                this.style.backgroundColor = "white";
+            });
 
-            sect.appendChild(button);
+            div.addEventListener("mousedown", function() {
+                this.style.backgroundColor = "black"; 
+            });
+
+            sect.appendChild(div);
         }
     }
 }
